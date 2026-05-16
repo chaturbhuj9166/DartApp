@@ -12,9 +12,9 @@ class AppConstants {
   // API
   // =========================
 
- static const String
+static const String
 baseUrl =
-"http://localhost:5000/api";
+"https://firstapp-backend-uu8b.onrender.com/api";
 
   // =========================
   // STORAGE KEYS

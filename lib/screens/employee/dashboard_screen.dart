@@ -175,63 +175,108 @@ extends State<DashboardScreen> {
   // PUNCH IN
   // =========================
 
-  void punchIn() async {
 
-    try {
 
-      setState(() {
+void punchIn() async {
 
-        isLoading = true;
+  // =========================
+  // TIME CHECK
+  // =========================
 
-      });
+  final now = DateTime.now();
 
-      final response =
-      await attendanceService
-      .punchIn();
+  // BLOCK BEFORE 9 AM
+  if(now.hour < 9){
 
-      if(!mounted) return;
+    ScaffoldMessenger.of(context)
+    .showSnackBar(
 
-      setState(() {
+      const SnackBar(
 
-        isLoading = false;
+        content: Text(
 
-        attendanceStatus =
-        "Present";
-
-      });
-
-      ScaffoldMessenger.of(context)
-      .showSnackBar(
-
-        SnackBar(
-
-          content: Text(
-
-            response["message"]
-            ?? "Punch In Success",
-
-          ),
+          "Punch In allowed after 9:00 AM",
 
         ),
 
-      );
+      ),
 
-    }
+    );
 
-    catch(e){
-
-      if(!mounted) return;
-
-      setState(() {
-
-        isLoading = false;
-
-      });
-
-    }
+    return;
 
   }
 
+  try {
+
+    setState(() {
+
+      isLoading = true;
+
+    });
+
+    // API CALL
+    final response =
+    await attendanceService
+    .punchIn();
+
+    if(!mounted) return;
+
+    setState(() {
+
+      isLoading = false;
+
+      attendanceStatus =
+      "Present";
+
+    });
+
+    // SUCCESS MESSAGE
+    ScaffoldMessenger.of(context)
+    .showSnackBar(
+
+      SnackBar(
+
+        content: Text(
+
+          response["message"]
+          ?? "Punch In Success",
+
+        ),
+
+      ),
+
+    );
+
+  }
+
+  catch(e){
+
+    if(!mounted) return;
+
+    setState(() {
+
+      isLoading = false;
+
+    });
+
+    // ERROR MESSAGE
+    ScaffoldMessenger.of(context)
+    .showSnackBar(
+
+      SnackBar(
+
+        content: Text(
+          e.toString(),
+        ),
+
+      ),
+
+    );
+
+  }
+
+}
   // =========================
   // PUNCH OUT
   // =========================

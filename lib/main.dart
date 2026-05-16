@@ -1,13 +1,77 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'package:timezone/data/latest.dart'
+as tz;
+
 import 'routes/app_routes.dart';
 
 import 'theme/app_theme.dart';
 
-void main() {
+// =========================
+// NOTIFICATION PLUGIN
+// =========================
+
+final FlutterLocalNotificationsPlugin
+flutterLocalNotificationsPlugin =
+
+FlutterLocalNotificationsPlugin();
+
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // =========================
+  // TIMEZONE INIT
+  // =========================
+
+  tz.initializeTimeZones();
+
+  // =========================
+  // ANDROID SETTINGS
+  // =========================
+
+  const AndroidInitializationSettings
+  androidSettings =
+
+  AndroidInitializationSettings(
+    '@mipmap/ic_launcher',
+  );
+
+  // =========================
+  // INIT SETTINGS
+  // =========================
+
+  const InitializationSettings
+  initializationSettings =
+
+  InitializationSettings(
+
+    android:
+    androidSettings,
+
+  );
+
+  // =========================
+  // INIT NOTIFICATION
+  // =========================
+
+  await flutterLocalNotificationsPlugin
+  .initialize(
+
+    initializationSettings,
+
+  );
+
+  // =========================
+  // RUN APP
+  // =========================
 
   runApp(
+
     const MyApp(),
+
   );
 
 }
