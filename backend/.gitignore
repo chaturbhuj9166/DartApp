@@ -1,0 +1,32 @@
+# NODE MODULES
+node_modules/
+
+# ENV FILE
+.env
+
+# LOG FILES
+logs
+*.log
+npm-debug.log*
+
+# OS FILES
+.DS_Store
+Thumbs.db
+
+# IDE FILES
+.vscode/
+.idea/
+
+# TEMP FILES
+tmp/
+temp/
+
+# BUILD FILES
+dist/
+build/
+
+# CACHE
+.cache/
+
+# OPTIONAL
+coverage/
