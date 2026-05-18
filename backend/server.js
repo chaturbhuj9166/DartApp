@@ -17,27 +17,26 @@ require("./routes/authRoutes");
 
 
 
-const attendanceRoutes =
-require("./routes/attendanceRoutes");
-
-const taskRoutes =
-require("./routes/taskRoutes");
-
-const notificationRoutes =
-require("./routes/notificationRoutes");
-
-const reportRoutes =
-require("./routes/reportRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const startAutoPunchOut = require("./utils/autoPunchOut");
 
 // ENV CONFIG
 dotenv.config();
 
-// CONNECT DATABASE
-connectDB();
-
 // EXPRESS APP
-const app =
-express();
+const app = express();
+
+const startServer = async () => {
+  await connectDB();
+  startAutoPunchOut();
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server Running On Port ${PORT}`);
+  });
+};
 
 // =========================================
 // MIDDLEWARE
@@ -139,19 +138,10 @@ app.use((req, res) => {
 // SERVER PORT
 // =========================================
 
-const PORT =
-process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 // =========================================
 // START SERVER
 // =========================================
 
-app.listen(PORT, () => {
-
-  console.log(
-
-    `🚀 Server Running On Port ${PORT}`
-
-  );
-
-});
+startServer();

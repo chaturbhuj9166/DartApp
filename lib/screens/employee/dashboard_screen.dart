@@ -47,10 +47,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
+    reminderShown = false;
+
     startClock();
+
     getUserData();
+
     getLatestTasks();
+
+    getTodayAttendance();
+
     _requestNotificationPermission();
+
     _startPunchReminderWatcher();
   }
 
@@ -76,6 +85,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Future<void> getTodayAttendance() async {
+    try {
+      final response = await attendanceService.getTodayAttendance();
+
+      final attendance = response["attendance"];
+
+      if (!mounted) return;
+
+      setState(() {
+        // =========================
+        // NO ATTENDANCE
+        // =========================
+
+        if (attendance == null) {
+          attendanceStatus = "Not Punched In";
+        }
+        // =========================
+        // ACTIVE SESSION
+        // =========================
+        else if (attendance["punchOutTime"] == null) {
+          attendanceStatus = "Present";
+        }
+        // =========================
+        // SESSION CLOSED
+        // =========================
+        else {
+          attendanceStatus = "Punched Out";
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        attendanceStatus = "Not Punched In";
+      });
+    }
+  }
+
   void startClock() {
     updateClock();
     timer = Timer.periodic(const Duration(seconds: 1), (_) => updateClock());
@@ -94,202 +141,143 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
- Future<void> punchIn() async {
-
-  // =========================
-  // ALREADY PUNCHED IN
-  // =========================
-
-  if (attendanceStatus == "Present") {
-
-    _showMessage("Already Punched In");
-
-    return;
-
-  }
-
-  // =========================
-  // TIME CHECK
-  // =========================
-
-  if (!_isPunchInTimeAllowed()) {
-
-    _showMessage("Punch In allowed after 9:00 AM");
-
-    return;
-
-  }
-
-  setState(() {
-
-    isLoading = true;
-
-  });
-
-  try {
-
+  Future<void> punchIn() async {
     // =========================
-    // OFFICE RANGE CHECK
+    // ALREADY PUNCHED IN
     // =========================
 
-    final insideOffice = await _isInsideOfficeRange();
-
-    if (!insideOffice) {
-
-      _showMessage("You are outside office range");
+    if (attendanceStatus == "Present") {
+      _showMessage("Already Punched In");
 
       return;
-
     }
 
     // =========================
-    // API CALL
+    // TIME CHECK
     // =========================
 
-    final response = await attendanceService.punchIn();
+    if (!_isPunchInTimeAllowed()) {
+      _showMessage("Punch In allowed after 9:00 AM");
 
-    final success = response["success"] != false;
-
-    if (!mounted) return;
+      return;
+    }
 
     setState(() {
-
-      if (success) {
-
-        attendanceStatus = "Present";
-
-      }
-
+      isLoading = true;
     });
 
-    // =========================
-    // SUCCESS MESSAGE
-    // =========================
+    try {
+      // =========================
+      // OFFICE RANGE CHECK
+      // =========================
 
-    _showMessage(
+      final insideOffice = await _isInsideOfficeRange();
 
-      response["message"] ?? "Punch In Success",
+      if (!insideOffice) {
+        _showMessage("You are outside office range");
 
-    );
+        return;
+      }
 
+      // =========================
+      // API CALL
+      // =========================
+
+      final response = await attendanceService.punchIn();
+
+      final success = response["success"] != false;
+
+      if (!mounted) return;
+
+      // =========================
+      // REFRESH STATUS
+      // =========================
+
+      if (success) {
+        await getTodayAttendance();
+      }
+
+      // =========================
+      // SUCCESS MESSAGE
+      // =========================
+
+      _showMessage(response["message"] ?? "Punch In Success");
+    } catch (error) {
+      _showMessage(error.toString());
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
-  catch (error) {
+  Future<void> punchOut() async {
+    // =========================
+    // ALREADY PUNCHED OUT
+    // =========================
 
-    _showMessage(error.toString());
+    if (attendanceStatus == "Punched Out") {
+      _showMessage("Already Punched Out");
 
-  }
-
-  finally {
-
-    if (mounted) {
-
-      setState(() {
-
-        isLoading = false;
-
-      });
-
+      return;
     }
 
-  }
-
-}
-
- Future<void> punchOut() async {
-
-  // =========================
-  // ALREADY PUNCHED OUT
-  // =========================
-
-  if (attendanceStatus == "Punched Out") {
-
-    _showMessage("Already Punched Out");
-
-    return;
-
-  }
-
-  // =========================
-  // NOT PUNCHED IN YET
-  // =========================
-
-  if (attendanceStatus != "Present") {
-
-    _showMessage("Please Punch In First");
-
-    return;
-
-  }
-
-  setState(() {
-
-    isLoading = true;
-
-  });
-
-  try {
-
     // =========================
-    // API CALL
+    // NOT PUNCHED IN
     // =========================
 
-    final response = await attendanceService.punchOut();
+    if (attendanceStatus != "Present") {
+      _showMessage("Please Punch In First");
 
-    final success = response["success"] != false;
-
-    if (!mounted) return;
+      return;
+    }
 
     setState(() {
-
-      if (success) {
-
-        attendanceStatus = "Punched Out";
-
-      }
-
+      isLoading = true;
     });
 
-    // =========================
-    // SUCCESS MESSAGE
-    // =========================
+    try {
+      // =========================
+      // API CALL
+      // =========================
 
-    _showMessage(
+      final response = await attendanceService.punchOut();
 
-      response["message"] ?? "Punch Out Success",
+      final success = response["success"] != false;
 
-    );
+      if (!mounted) return;
 
-  }
+      // =========================
+      // REFRESH STATUS
+      // =========================
 
-  catch (error) {
+      if (success) {
+        await getTodayAttendance();
+      }
 
-    _showMessage(error.toString());
+      // =========================
+      // SUCCESS MESSAGE
+      // =========================
 
-  }
-
-  finally {
-
-    if (mounted) {
-
-      setState(() {
-
-        isLoading = false;
-
-      });
-
+      _showMessage(response["message"] ?? "Punch Out Success");
+    } catch (error) {
+      _showMessage(error.toString());
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
-
   }
 
-}
-bool _isPunchInTimeAllowed() {
+  bool _isPunchInTimeAllowed() {
+    final now = DateTime.now();
 
-  final now = DateTime.now();
-
-  return now.hour >= 9;
-
-}
+    return now.hour >= 9;
+  }
 
   Future<Position> _getCurrentPosition() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -335,7 +323,7 @@ bool _isPunchInTimeAllowed() {
 
     print("Distance: $distance");
 
-    return distance <= 200; // 200 meters radius
+    return distance <= 300; // 200 meters radius
   }
 
   void _startPunchReminderWatcher() {
@@ -628,7 +616,7 @@ bool _isPunchInTimeAllowed() {
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.25),
+              color: color.withOpacity(0.25),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -748,6 +736,7 @@ class _HoldPunchInButtonState extends State<_HoldPunchInButton>
   @override
   void initState() {
     super.initState();
+
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 1))
           ..addStatusListener((status) {
