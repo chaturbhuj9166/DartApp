@@ -27,8 +27,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final AuthService authService = AuthService();
   final TaskService taskService = TaskService();
 
-  final double officeLat = 28.4450992;
-  final double officeLng = 74.5148962;
+  final double officeLat = 26.942596;
+
+  final double officeLng = 75.726550;
 
   bool isLoading = false;
   bool reminderShown = false;
@@ -93,76 +94,202 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  Future<void> punchIn() async {
-    if (!_isPunchInTimeAllowed()) {
-      _showMessage("Punch In allowed after 9:00 AM");
+ Future<void> punchIn() async {
+
+  // =========================
+  // ALREADY PUNCHED IN
+  // =========================
+
+  if (attendanceStatus == "Present") {
+
+    _showMessage("Already Punched In");
+
+    return;
+
+  }
+
+  // =========================
+  // TIME CHECK
+  // =========================
+
+  if (!_isPunchInTimeAllowed()) {
+
+    _showMessage("Punch In allowed after 9:00 AM");
+
+    return;
+
+  }
+
+  setState(() {
+
+    isLoading = true;
+
+  });
+
+  try {
+
+    // =========================
+    // OFFICE RANGE CHECK
+    // =========================
+
+    final insideOffice = await _isInsideOfficeRange();
+
+    if (!insideOffice) {
+
+      _showMessage("You are outside office range");
+
       return;
+
     }
+
+    // =========================
+    // API CALL
+    // =========================
+
+    final response = await attendanceService.punchIn();
+
+    final success = response["success"] != false;
+
+    if (!mounted) return;
 
     setState(() {
-      isLoading = true;
+
+      if (success) {
+
+        attendanceStatus = "Present";
+
+      }
+
     });
 
-    try {
-      final insideOffice = await _isInsideOfficeRange();
+    // =========================
+    // SUCCESS MESSAGE
+    // =========================
 
-      if (!insideOffice) {
-        _showMessage("You are outside office range");
-        return;
-      }
+    _showMessage(
 
-      final response = await attendanceService.punchIn();
-      final success = response["success"] != false;
+      response["message"] ?? "Punch In Success",
 
-      if (!mounted) return;
+    );
 
-      setState(() {
-        if (success) attendanceStatus = "Present";
-      });
-
-      _showMessage(response["message"] ?? "Punch In Success");
-    } catch (error) {
-      _showMessage(error.toString());
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
   }
 
-  Future<void> punchOut() async {
+  catch (error) {
+
+    _showMessage(error.toString());
+
+  }
+
+  finally {
+
+    if (mounted) {
+
+      setState(() {
+
+        isLoading = false;
+
+      });
+
+    }
+
+  }
+
+}
+
+ Future<void> punchOut() async {
+
+  // =========================
+  // ALREADY PUNCHED OUT
+  // =========================
+
+  if (attendanceStatus == "Punched Out") {
+
+    _showMessage("Already Punched Out");
+
+    return;
+
+  }
+
+  // =========================
+  // NOT PUNCHED IN YET
+  // =========================
+
+  if (attendanceStatus != "Present") {
+
+    _showMessage("Please Punch In First");
+
+    return;
+
+  }
+
+  setState(() {
+
+    isLoading = true;
+
+  });
+
+  try {
+
+    // =========================
+    // API CALL
+    // =========================
+
+    final response = await attendanceService.punchOut();
+
+    final success = response["success"] != false;
+
+    if (!mounted) return;
+
     setState(() {
-      isLoading = true;
+
+      if (success) {
+
+        attendanceStatus = "Punched Out";
+
+      }
+
     });
 
-    try {
-      final response = await attendanceService.punchOut();
-      final success = response["success"] != false;
+    // =========================
+    // SUCCESS MESSAGE
+    // =========================
 
-      if (!mounted) return;
+    _showMessage(
+
+      response["message"] ?? "Punch Out Success",
+
+    );
+
+  }
+
+  catch (error) {
+
+    _showMessage(error.toString());
+
+  }
+
+  finally {
+
+    if (mounted) {
 
       setState(() {
-        if (success) attendanceStatus = "Punched Out";
+
+        isLoading = false;
+
       });
 
-      _showMessage(response["message"] ?? "Punch Out Success");
-    } catch (error) {
-      _showMessage(error.toString());
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
     }
+
   }
 
-  bool _isPunchInTimeAllowed() {
-    final now = DateTime.now();
-    return now.hour >= 9;
-  }
+}
+bool _isPunchInTimeAllowed() {
+
+  final now = DateTime.now();
+
+  return now.hour >= 9;
+
+}
 
   Future<Position> _getCurrentPosition() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -198,6 +325,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       officeLat,
       officeLng,
     );
+    print("User Lat: ${position.latitude}");
+
+    print("User Lng: ${position.longitude}");
+
+    print("Office Lat: $officeLat");
+
+    print("Office Lng: $officeLng");
+
+    print("Distance: $distance");
 
     return distance <= 200; // 200 meters radius
   }

@@ -32,20 +32,18 @@ const punchIn = async (req, res) => {
     );
 
     // CHECK EXISTING ATTENDANCE
-    const alreadyPunched =
-      await Attendance.findOne({
+   const alreadyPunched =
+  await Attendance.findOne({
 
-        user: userId,
+    user: userId,
 
-        date: {
+    punchOutTime: null,
 
-          $gte: startOfDay,
+  }).sort({
 
-          $lte: endOfDay,
+    createdAt: -1,
 
-        },
-
-      });
+  });
 
     // ALREADY PUNCHED
     if (alreadyPunched) {
