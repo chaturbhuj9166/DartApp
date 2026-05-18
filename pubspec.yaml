@@ -40,6 +40,10 @@ dependencies:
 
   # TIMEZONE
   timezone: ^0.9.4
+  hold_down_button: ^1.1.0
+
+  # HOLD BUTTON
+hold_down_button: ^1.1.0
 
 dev_dependencies:
 
@@ -59,7 +63,7 @@ flutter:
 # APP ICON
 # =========================
 
-flutter_icons:
+flutter_launcher_icons:
 
   android: true
 
