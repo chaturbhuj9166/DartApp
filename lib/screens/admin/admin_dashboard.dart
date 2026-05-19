@@ -6,149 +6,87 @@ import '../auth/login_screen.dart';
 
 import 'attendance_screen.dart';
 
-import 'create_task_screen.dart';
+import 'create_announcement_screen.dart';
 
 import 'manage_users_screen.dart';
 
 import 'reports_screen.dart';
 
-class AdminDashboard
-extends StatelessWidget {
-
-  const AdminDashboard({
-    super.key,
-  });
+class AdminDashboard extends StatelessWidget {
+  const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    final AuthService
-    authService =
-    AuthService();
+    final AuthService authService = AuthService();
 
     return Scaffold(
-
-      backgroundColor:
-      const Color(0xFF0F172A),
+      backgroundColor: const Color(0xFF0F172A),
 
       appBar: AppBar(
-
-        backgroundColor:
-        Colors.transparent,
+        backgroundColor: Colors.transparent,
 
         elevation: 0,
 
         centerTitle: true,
 
         title: const Text(
-
           "Admin Dashboard",
 
-          style: TextStyle(
-            color: Colors.white,
-          ),
-
+          style: TextStyle(color: Colors.white),
         ),
 
         actions: [
-
           IconButton(
-
             onPressed: () async {
-
-              await authService
-              .logoutUser();
+              await authService.logoutUser();
 
               Navigator.pushAndRemoveUntil(
-
                 context,
 
-                MaterialPageRoute(
-
-                  builder: (context) =>
-                  const LoginScreen(),
-
-                ),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
 
                 (route) => false,
-
               );
-
             },
 
-            icon: const Icon(
-
-              Icons.logout,
-
-              color: Colors.white,
-
-            ),
-
+            icon: const Icon(Icons.logout, color: Colors.white),
           ),
-
         ],
-
       ),
 
       body: Padding(
-
-        padding:
-        const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
 
         child: Column(
-
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-
             // TITLE
             const Text(
-
               "Welcome Admin 👋",
 
               style: TextStyle(
-
-                color:
-                Colors.white,
+                color: Colors.white,
 
                 fontSize: 28,
 
-                fontWeight:
-                FontWeight.bold,
-
+                fontWeight: FontWeight.bold,
               ),
-
             ),
 
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
 
             const Text(
+              "Manage employees, announcements & reports",
 
-              "Manage employees, tasks & reports",
-
-              style: TextStyle(
-
-                color:
-                Colors.white70,
-
-                fontSize: 16,
-
-              ),
-
+              style: TextStyle(color: Colors.white70, fontSize: 16),
             ),
 
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
 
             // DASHBOARD GRID
             Expanded(
-
               child: GridView.count(
-
                 crossAxisCount: 2,
 
                 crossAxisSpacing: 15,
@@ -158,153 +96,97 @@ extends StatelessWidget {
                 childAspectRatio: 0.95,
 
                 children: [
-
-                  // CREATE TASK
+                  // CREATE ANNOUNCEMENT
                   dashboardCard(
-
                     context,
 
-                    title:
-                    "Create Task",
+                    title: "Create Announcement",
 
-                    icon:
-                    Icons.task,
+                    icon: Icons.campaign,
 
-                    color:
-                    Colors.blue,
+                    color: Colors.blue,
 
                     onTap: () {
-
                       Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
-
                           builder: (context) =>
-                          const CreateTaskScreen(),
-
+                              const CreateAnnouncementScreen(),
                         ),
-
                       );
-
                     },
-
                   ),
 
                   // MANAGE USERS
                   dashboardCard(
-
                     context,
 
-                    title:
-                    "Manage Users",
+                    title: "Manage Users",
 
-                    icon:
-                    Icons.people,
+                    icon: Icons.people,
 
-                    color:
-                    Colors.green,
+                    color: Colors.green,
 
                     onTap: () {
-
                       Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
-
-                          builder: (context) =>
-                          const ManageUsersScreen(),
-
+                          builder: (context) => const ManageUsersScreen(),
                         ),
-
                       );
-
                     },
-
                   ),
 
                   // REPORTS
                   dashboardCard(
-
                     context,
 
-                    title:
-                    "Reports",
+                    title: "Reports",
 
-                    icon:
-                    Icons.bar_chart,
+                    icon: Icons.bar_chart,
 
-                    color:
-                    Colors.orange,
+                    color: Colors.orange,
 
                     onTap: () {
-
                       Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
-
-                          builder: (context) =>
-                          const ReportsScreen(),
-
+                          builder: (context) => const ReportsScreen(),
                         ),
-
                       );
-
                     },
-
                   ),
 
                   // ATTENDANCE
                   dashboardCard(
-
                     context,
 
-                    title:
-                    "Attendance",
+                    title: "Attendance",
 
-                    icon:
-                    Icons.calendar_month,
+                    icon: Icons.calendar_month,
 
-                    color:
-                    Colors.purple,
+                    color: Colors.purple,
 
                     onTap: () {
-
                       Navigator.push(
-
                         context,
 
                         MaterialPageRoute(
-
-                          builder: (context) =>
-                          const AttendanceScreen(),
-
+                          builder: (context) => const AttendanceScreen(),
                         ),
-
                       );
-
                     },
-
                   ),
-
                 ],
-
               ),
-
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
 
   // =========================
@@ -312,7 +194,6 @@ extends StatelessWidget {
   // =========================
 
   Widget dashboardCard(
-
     BuildContext context, {
 
     required String title,
@@ -322,93 +203,51 @@ extends StatelessWidget {
     required Color color,
 
     required VoidCallback onTap,
-
   }) {
-
     return InkWell(
-
       onTap: onTap,
 
-      borderRadius:
-      BorderRadius.circular(25),
+      borderRadius: BorderRadius.circular(25),
 
       child: Container(
-
         decoration: BoxDecoration(
+          color: Colors.white10,
 
-          color:
-          Colors.white10,
-
-          borderRadius:
-          BorderRadius.circular(25),
-
+          borderRadius: BorderRadius.circular(25),
         ),
 
         child: Column(
-
-          mainAxisAlignment:
-          MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
             Container(
+              padding: const EdgeInsets.all(18),
 
-              padding:
-              const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: color,
 
-              decoration:
-              BoxDecoration(
-
-                color:
-                color,
-
-                borderRadius:
-                BorderRadius.circular(20),
-
+                borderRadius: BorderRadius.circular(20),
               ),
 
-              child: Icon(
-
-                icon,
-
-                size: 40,
-
-                color: Colors.white,
-
-              ),
-
+              child: Icon(icon, size: 40, color: Colors.white),
             ),
 
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
 
             Text(
-
               title,
 
               style: const TextStyle(
-
-                color:
-                Colors.white,
+                color: Colors.white,
 
                 fontSize: 18,
 
-                fontWeight:
-                FontWeight.bold,
-
+                fontWeight: FontWeight.bold,
               ),
-
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
-
 }

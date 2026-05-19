@@ -4,26 +4,15 @@ import '../../services/report_service.dart';
 
 import 'attendance_screen.dart';
 
-class ReportsScreen
-extends StatefulWidget {
-
-  const ReportsScreen({
-    super.key,
-  });
+class ReportsScreen extends StatefulWidget {
+  const ReportsScreen({super.key});
 
   @override
-  State<ReportsScreen>
-  createState() =>
-  _ReportsScreenState();
-
+  State<ReportsScreen> createState() => _ReportsScreenState();
 }
 
-class _ReportsScreenState
-extends State<ReportsScreen> {
-
-  final ReportService
-  reportService =
-  ReportService();
+class _ReportsScreenState extends State<ReportsScreen> {
+  final ReportService reportService = ReportService();
 
   bool isLoading = true;
 
@@ -33,36 +22,20 @@ extends State<ReportsScreen> {
   // GET REPORTS
   // =========================
 
-  Future<void> getReports()
-  async {
+  Future<void> getReports() async {
+    final response = await reportService.getReports();
 
-    final response =
-    await reportService
-    .getReports();
-
-    if(response["success"] == true){
-
+    if (response["success"] == true) {
       setState(() {
-
-        reports =
-        response["reports"];
+        reports = response["reports"];
 
         isLoading = false;
-
       });
-
-    }
-
-    else {
-
+    } else {
       setState(() {
-
         isLoading = false;
-
       });
-
     }
-
   }
 
   // =========================
@@ -71,249 +44,130 @@ extends State<ReportsScreen> {
 
   @override
   void initState() {
-
     super.initState();
 
     getReports();
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
-      backgroundColor:
-      const Color(0xFF0F172A),
+      backgroundColor: const Color(0xFF0F172A),
 
       appBar: AppBar(
-
-        backgroundColor:
-        Colors.transparent,
+        backgroundColor: Colors.transparent,
 
         elevation: 0,
 
         centerTitle: true,
 
-        title: const Text(
-
-          "Reports",
-
-          style: TextStyle(
-            color: Colors.white,
-          ),
-
-        ),
-
+        title: const Text("Reports", style: TextStyle(color: Colors.white)),
       ),
 
-      body:
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(20),
 
-      isLoading
+              child: GridView.count(
+                crossAxisCount: 2,
 
-      ? const Center(
+                childAspectRatio: 0.82,
 
-          child:
-          CircularProgressIndicator(),
+                crossAxisSpacing: 15,
 
-        )
+                mainAxisSpacing: 15,
 
-      : Padding(
+                children: [
+                  // USERS
+                  reportCard(
+                    title: "Total Users",
 
-          padding:
-          const EdgeInsets.all(20),
+                    value: reports["totalUsers"].toString(),
 
-          child: GridView.count(
+                    color: Colors.blue,
 
-            crossAxisCount: 2,
+                    icon: Icons.people,
 
-            childAspectRatio: 0.82,
+                    onTap: () {},
+                  ),
 
-            crossAxisSpacing: 15,
+                  // ADMINS
+                  reportCard(
+                    title: "Admins",
 
-            mainAxisSpacing: 15,
+                    value: reports["totalAdmins"].toString(),
 
-            children: [
+                    color: Colors.purple,
 
-              // USERS
+                    icon: Icons.admin_panel_settings,
 
-              reportCard(
+                    onTap: () {},
+                  ),
 
-                title:
-                "Total Users",
+                  // ANNOUNCEMENTS
+                  reportCard(
+                    title: "Total Announcements",
 
-                value:
-                reports["totalUsers"]
-                .toString(),
+                    value: reports["totalAnnouncements"].toString(),
 
-                color:
-                Colors.blue,
+                    color: Colors.orange,
 
-                icon:
-                Icons.people,
+                    icon: Icons.campaign,
 
-                onTap: () {
+                    onTap: () {},
+                  ),
 
-                  print(
-                    "Users Clicked",
-                  );
+                  // EMPLOYEES
+                  reportCard(
+                    title: "Employees",
 
-                },
+                    value: reports["totalEmployees"].toString(),
 
+                    color: Colors.green,
+
+                    icon: Icons.people,
+
+                    onTap: () {},
+                  ),
+
+                  // PRESENT TODAY
+                  reportCard(
+                    title: "Present Today",
+
+                    value: reports["presentEmployees"].toString(),
+
+                    color: Colors.purple,
+
+                    icon: Icons.how_to_reg,
+
+                    onTap: () {},
+                  ),
+
+                  // ATTENDANCE
+                  reportCard(
+                    title: "Attendance",
+
+                    value: reports["totalAttendance"].toString(),
+
+                    color: Colors.cyan,
+
+                    icon: Icons.calendar_month,
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+
+                        MaterialPageRoute(
+                          builder: (context) => const AttendanceScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-
-              // ADMINS
-
-              reportCard(
-
-                title:
-                "Admins",
-
-                value:
-                reports["totalAdmins"]
-                .toString(),
-
-                color:
-                Colors.purple,
-
-                icon:
-                Icons.admin_panel_settings,
-
-                onTap: () {
-
-                  print(
-                    "Admins Clicked",
-                  );
-
-                },
-
-              ),
-
-              // TASKS
-
-              reportCard(
-
-                title:
-                "Total Tasks",
-
-                value:
-                reports["totalTasks"]
-                .toString(),
-
-                color:
-                Colors.orange,
-
-                icon:
-                Icons.task,
-
-                onTap: () {
-
-                  print(
-                    "Tasks Clicked",
-                  );
-
-                },
-
-              ),
-
-              // COMPLETED
-
-              reportCard(
-
-                title:
-                "Completed",
-
-                value:
-                reports["completedTasks"]
-                .toString(),
-
-                color:
-                Colors.green,
-
-                icon:
-                Icons.check_circle,
-
-                onTap: () {
-
-                  print(
-                    "Completed Clicked",
-                  );
-
-                },
-
-              ),
-
-              // PENDING
-
-              reportCard(
-
-                title:
-                "Pending",
-
-                value:
-                reports["pendingTasks"]
-                .toString(),
-
-                color:
-                Colors.red,
-
-                icon:
-                Icons.pending,
-
-                onTap: () {
-
-                  print(
-                    "Pending Clicked",
-                  );
-
-                },
-
-              ),
-
-              // ATTENDANCE
-
-              reportCard(
-
-                title:
-                "Attendance",
-
-                value:
-                reports["totalAttendance"]
-                .toString(),
-
-                color:
-                Colors.cyan,
-
-                icon:
-                Icons.calendar_month,
-
-                onTap: () {
-
-                  Navigator.push(
-
-                    context,
-
-                    MaterialPageRoute(
-
-                      builder: (context) =>
-                      const AttendanceScreen(),
-
-                    ),
-
-                  );
-
-                },
-
-              ),
-
-            ],
-
-          ),
-
-        ),
-
+            ),
     );
-
   }
 
   // =========================
@@ -321,7 +175,6 @@ extends State<ReportsScreen> {
   // =========================
 
   Widget reportCard({
-
     required String title,
 
     required String value,
@@ -331,111 +184,57 @@ extends State<ReportsScreen> {
     required IconData icon,
 
     required VoidCallback onTap,
-
   }) {
-
     return GestureDetector(
-
       onTap: onTap,
 
       child: Container(
+        padding: const EdgeInsets.all(15),
 
-        padding:
-        const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white10,
 
-        decoration:
-        BoxDecoration(
-
-          color:
-          Colors.white10,
-
-          borderRadius:
-          BorderRadius.circular(25),
-
+          borderRadius: BorderRadius.circular(25),
         ),
 
         child: Column(
-
-          mainAxisAlignment:
-          MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
           children: [
-
             Container(
+              padding: const EdgeInsets.all(15),
 
-              padding:
-              const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: color,
 
-              decoration:
-              BoxDecoration(
-
-                color:
-                color,
-
-                borderRadius:
-                BorderRadius.circular(20),
-
+                borderRadius: BorderRadius.circular(20),
               ),
 
-              child: Icon(
-
-                icon,
-
-                color:
-                Colors.white,
-
-                size: 35,
-
-              ),
-
+              child: Icon(icon, color: Colors.white, size: 35),
             ),
 
             Text(
-
               value,
 
-              style:
-              const TextStyle(
-
-                color:
-                Colors.white,
+              style: const TextStyle(
+                color: Colors.white,
 
                 fontSize: 28,
 
-                fontWeight:
-                FontWeight.bold,
-
+                fontWeight: FontWeight.bold,
               ),
-
             ),
 
             Text(
-
               title,
 
-              textAlign:
-              TextAlign.center,
+              textAlign: TextAlign.center,
 
-              style:
-              const TextStyle(
-
-                color:
-                Colors.white70,
-
-                fontSize: 16,
-
-              ),
-
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
-
 }

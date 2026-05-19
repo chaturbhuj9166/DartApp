@@ -101,6 +101,8 @@ const punchIn = async (
     const now =
       new Date();
 
+
+
     // CHECK TIME
 
     if (
@@ -237,7 +239,9 @@ const punchOut = async (
     }
 
     const currentTime =
+
       new Date();
+
 
     // SAVE PUNCH OUT
 

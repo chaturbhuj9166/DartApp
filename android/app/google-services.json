@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "919903691304",
+    "project_id": "zepfly-app",
+    "storage_bucket": "zepfly-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919903691304:android:5d59733490bcd43dedcb1d",
+        "android_client_info": {
+          "package_name": "com.example.firstapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbayLHHD5p9Ls23p9P0lhT2uZkQpbchvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -35,6 +35,14 @@ new mongoose.Schema({
 
   },
 
+  announcement: {
+
+    type: mongoose.Schema.Types.ObjectId,
+
+    ref: "Announcement",
+
+  },
+
   isRead: {
 
     type: Boolean,

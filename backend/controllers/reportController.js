@@ -1,8 +1,8 @@
 const User =
 require("../models/User");
 
-const Task =
-require("../models/Task");
+const Announcement =
+require("../models/Announcement");
 
 const Attendance =
 require("../models/Attendance");
@@ -16,11 +16,17 @@ async (req, res) => {
 
   try {
 
+    // =========================================
     // TOTAL USERS
+    // =========================================
+
     const totalUsers =
     await User.countDocuments();
 
+    // =========================================
     // TOTAL ADMINS
+    // =========================================
+
     const totalAdmins =
     await User.countDocuments({
 
@@ -28,29 +34,45 @@ async (req, res) => {
 
     });
 
-    // TOTAL TASKS
-    const totalTasks =
-    await Task.countDocuments();
+    // =========================================
+    // TOTAL EMPLOYEES
+    // =========================================
 
-    // COMPLETED TASKS
-    const completedTasks =
-    await Task.countDocuments({
+    const totalEmployees =
+    await User.countDocuments({
 
-      status: "Completed",
-
-    });
-
-    // PENDING TASKS
-    const pendingTasks =
-    await Task.countDocuments({
-
-      status: "Pending",
+      role: "employee",
 
     });
 
+    // =========================================
+    // TOTAL ANNOUNCEMENTS
+    // =========================================
+
+    const totalAnnouncements =
+    await Announcement.countDocuments();
+
+    // =========================================
     // TOTAL ATTENDANCE
+    // =========================================
+
     const totalAttendance =
     await Attendance.countDocuments();
+
+    // =========================================
+    // PRESENT EMPLOYEES
+    // =========================================
+
+    const presentEmployees =
+    await Attendance.countDocuments({
+
+      punchOutTime: null,
+
+    });
+
+    // =========================================
+    // RESPONSE
+    // =========================================
 
     res.status(200).json({
 
@@ -62,13 +84,13 @@ async (req, res) => {
 
         totalAdmins,
 
-        totalTasks,
+        totalEmployees,
 
-        completedTasks,
-
-        pendingTasks,
+        totalAnnouncements,
 
         totalAttendance,
+
+        presentEmployees,
 
       },
 
@@ -82,13 +104,18 @@ async (req, res) => {
 
       success: false,
 
-      message: error.message,
+      message:
+      error.message,
 
     });
 
   }
 
 };
+
+// =========================================
+// EXPORTS
+// =========================================
 
 module.exports = {
 

@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../../services/task_service.dart';
+import '../../services/announcement_service.dart';
 
-class TaskDetailScreen
+class AnnouncementDetailScreen
 extends StatefulWidget {
 
-  final Map task;
+  final Map announcement;
 
-  const TaskDetailScreen({
+  const AnnouncementDetailScreen({
 
     super.key,
 
-    required this.task,
+    required this.announcement,
 
   });
 
   @override
-  State<TaskDetailScreen>
+  State<AnnouncementDetailScreen>
   createState() =>
-  _TaskDetailScreenState();
+  _AnnouncementDetailScreenState();
 
 }
 
-class _TaskDetailScreenState
-extends State<TaskDetailScreen> {
+class _AnnouncementDetailScreenState
+extends State<AnnouncementDetailScreen> {
 
-  final TaskService
-  taskService =
-  TaskService();
+  final AnnouncementService
+  announcementService =
+  AnnouncementService();
 
   final TextEditingController
   replyController =
@@ -72,16 +72,16 @@ extends State<TaskDetailScreen> {
     });
 
     final response =
-    await taskService.replyTask(
+    await announcementService.replyAnnouncement(
 
-      taskId:
-      widget.task["_id"] ?? "",
+      announcementId:
+      widget.announcement["_id"] ?? "",
 
       reply:
       replyController.text.trim(),
 
       status:
-      "Completed",
+      "Seen",
 
     );
 
@@ -130,27 +130,23 @@ extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
 
     final String title =
-    widget.task["title"] ??
+    widget.announcement["title"] ??
     "No Title";
 
     final String description =
-    widget.task["description"] ??
+    widget.announcement["description"] ??
     "No Description";
 
     final String status =
-    widget.task["status"] ??
-    "Pending";
+    widget.announcement["status"] ??
+    "Unread";
 
     final String reply =
-    widget.task["reply"] ?? "";
+    widget.announcement["reply"] ?? "";
 
-    final String dueDate =
-    widget.task["dueDate"] ??
-    "No Due Date";
-
-    final String priority =
-    widget.task["priority"] ??
-    "Normal";
+    final String createdAt =
+    widget.announcement["createdAt"] ??
+    "";
 
     return Scaffold(
 
@@ -168,7 +164,7 @@ extends State<TaskDetailScreen> {
 
         title: const Text(
 
-          "Task Details",
+          "Announcement Details",
 
           style: TextStyle(
             color: Colors.white,
@@ -190,9 +186,7 @@ extends State<TaskDetailScreen> {
 
           children: [
 
-            // =========================
-            // TASK CARD
-            // =========================
+            // CARD
 
             Container(
 
@@ -220,11 +214,10 @@ extends State<TaskDetailScreen> {
                 children: [
 
                   // TITLE
+
                   Text(
 
                     title,
-
-                    softWrap: true,
 
                     style:
                     const TextStyle(
@@ -246,6 +239,7 @@ extends State<TaskDetailScreen> {
                   ),
 
                   // STATUS
+
                   Container(
 
                     padding:
@@ -262,7 +256,7 @@ extends State<TaskDetailScreen> {
 
                       color:
 
-                      status == "Completed"
+                      status == "Seen"
 
                       ? Colors.green
 
@@ -276,11 +270,6 @@ extends State<TaskDetailScreen> {
                     child: Text(
 
                       status,
-
-                      maxLines: 1,
-
-                      overflow:
-                      TextOverflow.ellipsis,
 
                       style:
                       const TextStyle(
@@ -301,73 +290,44 @@ extends State<TaskDetailScreen> {
                     height: 25,
                   ),
 
-                  // =========================
-                  // TASK INFO
-                  // =========================
+                  // DATE
 
-                  Container(
+                  Row(
 
-                    width: double.infinity,
+                    children: [
 
-                    padding:
-                    const EdgeInsets.all(18),
+                      const Icon(
 
-                    decoration:
-                    BoxDecoration(
+                        Icons.calendar_month,
 
-                      color:
-                      Colors.black26,
+                        color:
+                        Colors.white,
 
-                      borderRadius:
-                      BorderRadius.circular(20),
+                      ),
 
-                    ),
+                      const SizedBox(
+                        width: 10,
+                      ),
 
-                    child: Column(
+                      Expanded(
 
-                      children: [
+                        child: Text(
 
-                        taskInfoRow(
+                          createdAt,
 
-                          Icons.calendar_month,
+                          style:
+                          const TextStyle(
 
-                          "Due Date",
+                            color:
+                            Colors.white70,
 
-                          dueDate,
-
-                        ),
-
-                        const SizedBox(
-                          height: 15,
-                        ),
-
-                        taskInfoRow(
-
-                          Icons.priority_high,
-
-                          "Priority",
-
-                          priority,
+                          ),
 
                         ),
 
-                        const SizedBox(
-                          height: 15,
-                        ),
+                      ),
 
-                        taskInfoRow(
-
-                          Icons.fingerprint,
-
-                          "Task ID",
-
-                          widget.task["_id"],
-
-                        ),
-
-                      ],
-
-                    ),
+                    ],
 
                   ),
 
@@ -376,9 +336,10 @@ extends State<TaskDetailScreen> {
                   ),
 
                   // DESCRIPTION TITLE
+
                   const Text(
 
-                    "Description",
+                    "Announcement Message",
 
                     style: TextStyle(
 
@@ -399,6 +360,7 @@ extends State<TaskDetailScreen> {
                   ),
 
                   // DESCRIPTION
+
                   Text(
 
                     description,
@@ -427,9 +389,7 @@ extends State<TaskDetailScreen> {
               height: 30,
             ),
 
-            // =========================
             // CURRENT REPLY
-            // =========================
 
             Container(
 
@@ -442,12 +402,7 @@ extends State<TaskDetailScreen> {
               BoxDecoration(
 
                 color:
-
-                reply.isEmpty
-
-                ? Colors.white10
-
-                : Colors.green.withOpacity(0.15),
+                Colors.white10,
 
                 borderRadius:
                 BorderRadius.circular(25),
@@ -463,7 +418,7 @@ extends State<TaskDetailScreen> {
 
                   const Text(
 
-                    "Current Reply",
+                    "Your Reply",
 
                     style: TextStyle(
 
@@ -513,36 +468,14 @@ extends State<TaskDetailScreen> {
               height: 30,
             ),
 
-            // REPLY TITLE
-            const Text(
-
-              "Write Reply",
-
-              style: TextStyle(
-
-                color:
-                Colors.white,
-
-                fontSize: 18,
-
-                fontWeight:
-                FontWeight.bold,
-
-              ),
-
-            ),
-
-            const SizedBox(
-              height: 15,
-            ),
-
             // REPLY FIELD
+
             TextField(
 
               controller:
               replyController,
 
-              maxLines: 6,
+              maxLines: 5,
 
               style:
               const TextStyle(
@@ -556,7 +489,7 @@ extends State<TaskDetailScreen> {
               InputDecoration(
 
                 hintText:
-                "Write your reply here...",
+                "Write your reply...",
 
                 hintStyle:
                 const TextStyle(
@@ -590,7 +523,8 @@ extends State<TaskDetailScreen> {
               height: 30,
             ),
 
-            // SUBMIT BUTTON
+            // BUTTON
+
             SizedBox(
 
               width: double.infinity,
@@ -604,12 +538,7 @@ extends State<TaskDetailScreen> {
                 ElevatedButton.styleFrom(
 
                   backgroundColor:
-
-                  status == "Completed"
-
-                  ? Colors.green
-
-                  : Colors.blue,
+                  Colors.blue,
 
                   shape:
                   RoundedRectangleBorder(
@@ -624,9 +553,7 @@ extends State<TaskDetailScreen> {
                 onPressed:
 
                 isLoading
-
                 ? null
-
                 : submitReply,
 
                 icon:
@@ -661,12 +588,7 @@ extends State<TaskDetailScreen> {
 
                   ? "Submitting..."
 
-                  : "Submit Reply",
-
-                  overflow:
-                  TextOverflow.ellipsis,
-
-                  maxLines: 1,
+                  : "Send Reply",
 
                   style:
                   const TextStyle(
@@ -689,81 +611,6 @@ extends State<TaskDetailScreen> {
         ),
 
       ),
-
-    );
-
-  }
-
-  // =========================
-  // TASK INFO ROW
-  // =========================
-
-  Widget taskInfoRow(
-
-    IconData icon,
-
-    String title,
-
-    String value,
-
-  ){
-
-    return Row(
-
-      children: [
-
-        Icon(
-
-          icon,
-
-          color:
-          Colors.white,
-
-        ),
-
-        const SizedBox(
-          width: 12,
-        ),
-
-        Text(
-
-          "$title : ",
-
-          style:
-          const TextStyle(
-
-            color:
-            Colors.white,
-
-            fontWeight:
-            FontWeight.bold,
-
-          ),
-
-        ),
-
-        Expanded(
-
-          child: Text(
-
-            value,
-
-            overflow:
-            TextOverflow.ellipsis,
-
-            style:
-            const TextStyle(
-
-              color:
-              Colors.white70,
-
-            ),
-
-          ),
-
-        ),
-
-      ],
 
     );
 

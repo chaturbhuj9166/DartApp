@@ -18,7 +18,7 @@ require("./routes/authRoutes");
 
 
 const attendanceRoutes = require("./routes/attendanceRoutes");
-const taskRoutes = require("./routes/taskRoutes");
+const announcementRoutes = require("./routes/announcementRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const startAutoPunchOut = require("./utils/autoPunchOut");
@@ -99,10 +99,10 @@ app.use(
   attendanceRoutes
 );
 
-// TASKS
+// ANNOUNCEMENTS
 app.use(
-  "/api/tasks",
-  taskRoutes
+  "/api/announcements",
+  announcementRoutes
 );
 
 // NOTIFICATIONS

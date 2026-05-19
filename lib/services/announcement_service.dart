@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_service.dart';
 
-class TaskService {
+class AnnouncementService {
 
   // =========================
   // GET TOKEN
@@ -27,11 +27,11 @@ class TaskService {
   }
 
   // =========================
-  // GET USER TASKS
+  // GET ANNOUNCEMENTS
   // =========================
 
   Future<Map<String, dynamic>>
-  getUserTasks()
+  getAnnouncements()
   async {
 
     try {
@@ -41,7 +41,7 @@ class TaskService {
 
       final url = Uri.parse(
 
-        "${ApiService.baseUrl}/tasks/user",
+        "${ApiService.baseUrl}/announcements/user",
 
       );
 
@@ -81,25 +81,26 @@ class TaskService {
   }
 
   // =========================
-  // GET LATEST TASKS
+  // GET LATEST ANNOUNCEMENTS
   // =========================
 
   Future<List>
-  getLatestTasks()
+  getLatestAnnouncements()
   async {
 
     try {
 
       final response =
-      await getUserTasks();
+      await getAnnouncements();
 
       if(response["success"] == true){
 
-        List tasks =
-        response["tasks"] ?? [];
+        List announcements =
+        response["announcements"] ?? [];
 
-        // LATEST 2 TASKS
-        return tasks.take(2).toList();
+        return announcements
+        .take(2)
+        .toList();
 
       }
 
@@ -116,13 +117,13 @@ class TaskService {
   }
 
   // =========================
-  // REPLY TASK
+  // REPLY ANNOUNCEMENT
   // =========================
 
   Future<Map<String, dynamic>>
-  replyTask({
+  replyAnnouncement({
 
-    required String taskId,
+    required String announcementId,
 
     required String reply,
 
@@ -137,7 +138,7 @@ class TaskService {
 
       final url = Uri.parse(
 
-        "${ApiService.baseUrl}/tasks/reply",
+        "${ApiService.baseUrl}/announcements/reply",
 
       );
 
@@ -158,8 +159,8 @@ class TaskService {
 
         body: jsonEncode({
 
-          "taskId":
-          taskId,
+          "announcementId":
+          announcementId,
 
           "reply":
           reply,
@@ -193,11 +194,11 @@ class TaskService {
   }
 
   // =========================
-  // CREATE TASK
+  // CREATE ANNOUNCEMENT
   // =========================
 
   Future<Map<String, dynamic>>
-  createTask({
+  createAnnouncement({
 
     required String title,
 
@@ -205,7 +206,7 @@ class TaskService {
 
     required String assignedTo,
 
-    required String dueDate,
+    required bool sendToAll,
 
   }) async {
 
@@ -216,7 +217,7 @@ class TaskService {
 
       final url = Uri.parse(
 
-        "${ApiService.baseUrl}/tasks/create",
+        "${ApiService.baseUrl}/announcements/create",
 
       );
 
@@ -246,10 +247,65 @@ class TaskService {
           "assignedTo":
           assignedTo,
 
-          "dueDate":
-          dueDate,
+          "sendToAll":
+          sendToAll,
 
         }),
+
+      );
+
+      return jsonDecode(
+        response.body,
+      );
+
+    }
+
+    catch(error){
+
+      return {
+
+        "success": false,
+
+        "message":
+        error.toString(),
+
+      };
+
+    }
+
+  }
+
+  // =========================
+  // MARK AS SEEN
+  // =========================
+
+  Future<Map<String, dynamic>>
+  markAsSeen(
+    String id,
+  ) async {
+
+    try {
+
+      String? token =
+      await getToken();
+
+      final url = Uri.parse(
+
+        "${ApiService.baseUrl}/announcements/seen/$id",
+
+      );
+
+      final response =
+      await http.put(
+
+        url,
+
+        headers: {
+
+          "Authorization":
+          "Bearer $token",
+
+        },
 
       );
 

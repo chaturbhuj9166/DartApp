@@ -1,7 +1,7 @@
 const mongoose =
 require("mongoose");
 
-const taskSchema =
+const announcementSchema =
 new mongoose.Schema({
 
   title: {
@@ -29,8 +29,6 @@ new mongoose.Schema({
 
     ref: "User",
 
-    required: true,
-
   },
 
   assignedBy: {
@@ -44,22 +42,21 @@ new mongoose.Schema({
 
   },
 
+  sendToAll: {
+
+    type: Boolean,
+
+    default: false,
+
+  },
+
   status: {
 
     type: String,
 
-    enum: [
+    enum: ["Unread", "Seen", "Replied"],
 
-      "Pending",
-
-      "In Progress",
-
-      "Completed",
-
-    ],
-
-    default:
-    "Pending",
+    default: "Unread",
 
   },
 
@@ -71,11 +68,18 @@ new mongoose.Schema({
 
   },
 
-  dueDate: {
+  seenBy: [
 
-    type: Date,
+    {
 
-  },
+      type:
+      mongoose.Schema.Types.ObjectId,
+
+      ref: "User",
+
+    }
+
+  ],
 
 }, {
 
@@ -86,8 +90,8 @@ new mongoose.Schema({
 module.exports =
 mongoose.model(
 
-  "Task",
+  "Announcement",
 
-  taskSchema
+  announcementSchema
 
 );

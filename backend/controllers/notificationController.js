@@ -31,6 +31,14 @@ async (req, res) => {
 
     )
 
+    .populate(
+
+      "announcement",
+
+      "title description status reply"
+
+    )
+
     .sort({
 
       createdAt: -1,
@@ -158,6 +166,7 @@ async ({
   user,
   title,
   message,
+  announcement,
 
 }) => {
 
@@ -170,6 +179,8 @@ async ({
       title,
 
       message,
+
+      announcement,
 
     });
 

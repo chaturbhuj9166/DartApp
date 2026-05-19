@@ -6,15 +6,19 @@ express.Router();
 
 const {
 
-  createTask,
+  createAnnouncement,
 
-  getUserTasks,
+  getUserAnnouncements,
 
-  replyTask,
+  replyAnnouncement,
+
+  markAnnouncementSeen,
+
+  deleteAnnouncement,
 
 } = require(
 
-  "../controllers/taskController"
+  "../controllers/announcementController"
 
 );
 
@@ -33,7 +37,7 @@ require(
 );
 
 // =========================================
-// CREATE TASK
+// CREATE ANNOUNCEMENT
 // =========================================
 
 router.post(
@@ -44,12 +48,12 @@ router.post(
 
   adminMiddleware,
 
-  createTask
+  createAnnouncement
 
 );
 
 // =========================================
-// GET USER TASKS
+// GET USER ANNOUNCEMENTS
 // =========================================
 
 router.get(
@@ -58,12 +62,12 @@ router.get(
 
   authMiddleware,
 
-  getUserTasks
+  getUserAnnouncements
 
 );
 
 // =========================================
-// REPLY TASK
+// REPLY TO ANNOUNCEMENT
 // =========================================
 
 router.post(
@@ -72,7 +76,37 @@ router.post(
 
   authMiddleware,
 
-  replyTask
+  replyAnnouncement
+
+);
+
+// =========================================
+// MARK AS SEEN
+// =========================================
+
+router.put(
+
+  "/seen/:id",
+
+  authMiddleware,
+
+  markAnnouncementSeen
+
+);
+
+// =========================================
+// DELETE ANNOUNCEMENT
+// =========================================
+
+router.delete(
+
+  "/:id",
+
+  authMiddleware,
+
+  adminMiddleware,
+
+  deleteAnnouncement
 
 );
 

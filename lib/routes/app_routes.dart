@@ -8,7 +8,7 @@ import '../screens/auth/register_screen.dart';
 
 import '../screens/employee/dashboard_screen.dart';
 
-import '../screens/employee/tasks_screen.dart';
+import '../screens/employee/announcements_screen.dart';
 
 import '../screens/employee/profile_screen.dart';
 
@@ -18,7 +18,7 @@ import '../screens/employee/attendance_history_screen.dart';
 
 import '../screens/admin/admin_dashboard.dart';
 
-import '../screens/admin/create_task_screen.dart';
+import '../screens/admin/create_announcement_screen.dart';
 
 import '../screens/admin/manage_users_screen.dart';
 
@@ -55,8 +55,8 @@ class AppRoutes {
   "/dashboard";
 
   static const String
-  tasks =
-  "/tasks";
+  announcements =
+  "/announcements";
 
   static const String
   profile =
@@ -79,8 +79,8 @@ class AppRoutes {
   "/admin-dashboard";
 
   static const String
-  createTask =
-  "/create-task";
+  createAnnouncement =
+  "/create-announcement";
 
   static const String
   manageUsers =
@@ -95,8 +95,8 @@ class AppRoutes {
   "/attendance";
 
   static const String
-adminPin =
-"/admin-pin";
+  adminPin =
+  "/admin-pin";
 
   // =========================
   // ROUTES
@@ -106,11 +106,13 @@ adminPin =
   routes = {
 
     // SPLASH
+
     splash:
     (context) =>
     const SplashScreen(),
 
     // AUTH
+
     login:
     (context) =>
     const LoginScreen(),
@@ -127,9 +129,9 @@ adminPin =
     (context) =>
     const DashboardScreen(),
 
-    tasks:
+    announcements:
     (context) =>
-    const TasksScreen(),
+    const AnnouncementsScreen(),
 
     profile:
     (context) =>
@@ -151,9 +153,9 @@ adminPin =
     (context) =>
     const AdminDashboard(),
 
-    createTask:
+    createAnnouncement:
     (context) =>
-    const CreateTaskScreen(),
+    const CreateAnnouncementScreen(),
 
     manageUsers:
     (context) =>
@@ -168,8 +170,8 @@ adminPin =
     const AttendanceScreen(),
 
     adminPin:
-(context) =>
-const AdminPinScreen(),
+    (context) =>
+    const AdminPinScreen(),
 
   };
 
